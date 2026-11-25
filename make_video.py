@@ -262,6 +262,7 @@ def main():
     ap.add_argument("--scene-len", type=float, default=16.0)
     ap.add_argument("--preview", type=float, default=0, help="render only first N seconds")
     ap.add_argument("--start", type=float, default=0, help="preview start offset")
+    ap.add_argument("--shift", type=float, default=0, help="shift all lyric timings by N seconds")
     ap.add_argument("--font")
     a = ap.parse_args()
 
@@ -274,6 +275,7 @@ def main():
         json.dump(tim, open(a.timings, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
         print("wrote", a.timings, "(edit start/end seconds to fine-tune)")
 
+    tim = [[s + a.shift, min(e + a.shift, dur - 0.5), t] for s, e, t in tim]
     font = find_font(54, a.font); fbig = find_font(76, a.font); fsm = find_font(32, a.font)
     vig = make_vignette(); rng = np.random.default_rng(1)
     total = a.preview or (dur - a.start)
